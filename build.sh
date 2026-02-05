@@ -2,38 +2,16 @@
 set -e
 
 # Usage:
-#   ./build.sh native   # build only native binary
-#   ./build.sh wasm     # build only WASM/WASI module
-#   ./build.sh both     # build both (default)
+#   ./build.sh wasm     # build only Wasm module against WASI
+#   ./build.sh atym     # build for Wasm and push to Atym
 #
 MODE="${1:-both}"
 
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-build_native() {
-    echo "=== Building native binary ==="
-    BUILD_DIR="${ROOT_DIR}/build-native"
-    mkdir -p "${BUILD_DIR}"
-    cd "${BUILD_DIR}"
-
-    if [ ! -f CMakeCache.txt ]; then
-        cmake .. \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DBUILD_WASM=OFF
-    fi
-
-    cmake --build . -- -j
-
-    echo
-    echo "Native build outputs:"
-    ls -al "${BUILD_DIR}"
-    echo "=== Native build done ==="
-    echo
-}
-
 build_wasm() {
     echo "=== Building WASM/WASI module ==="
-    BUILD_DIR="${ROOT_DIR}/build-wasm"
+    BUILD_DIR="${ROOT_DIR}/build"
     mkdir -p "${BUILD_DIR}"
     cd "${BUILD_DIR}"
 
@@ -63,7 +41,7 @@ build_wasm() {
 
 clean() {
     echo "=== Cleaning build directories ==="
-    rm -rf "${ROOT_DIR}/build-native" "${ROOT_DIR}/build-wasm"
+    rm -rf "${ROOT_DIR}/build"
     echo "=== Clean done ==="
     echo
 }
@@ -74,7 +52,7 @@ build_atym() {
     
     cd "${ASSETS_CONT_DIR}"
     atym build
-    atym push ei-assets
+    atym push ei-assets -a aot.yaml
 
     echo
 
@@ -82,7 +60,7 @@ build_atym() {
     
     cd "${DATA_CONT_DIR}"
     atym build
-    atym push ei-data
+    atym push ei-data -a aot.yaml
 
     echo
 
@@ -100,9 +78,6 @@ case "${MODE}" in
     clean)
         clean
         ;;
-    native)
-        build_native
-        ;;
     wasm)
         build_wasm
         ;;
@@ -110,13 +85,9 @@ case "${MODE}" in
         build_wasm
         build_atym
         ;;
-    both)
-        build_native
-        build_wasm
-        ;;
     *)
         echo "Unknown mode: ${MODE}"
-        echo "Usage: $0 [clean|native|wasm|both]"
+        echo "Usage: $0 [clean|wasm|atym]"
         exit 1
         ;;
 esac
