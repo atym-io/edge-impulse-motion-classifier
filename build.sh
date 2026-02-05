@@ -70,6 +70,14 @@ clean() {
 
 build_atym() {
     echo "=== Building for ATYM ==="
+    ASSETS_CONT_DIR="${ROOT_DIR}/container-assets"
+    
+    cd "${ASSETS_CONT_DIR}"
+    atym build
+    atym push ei-assets
+
+    echo
+
     DATA_CONT_DIR="${ROOT_DIR}/container-data"
     
     cd "${DATA_CONT_DIR}"
