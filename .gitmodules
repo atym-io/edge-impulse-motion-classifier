@@ -3,7 +3,7 @@
 	url = https://github.com/project-ocre/ocre-sdk.git
 [submodule "QCBOR"]
 	path = QCBOR
-	url = git@github.com:laurencelundblade/QCBOR.git
+	url = https://github.com/laurencelundblade/QCBOR.git
 [submodule "edge-impulse-sdk"]
 	path = edge-impulse-sdk
-	url = git@github.com:atym-io/edge-impulse-sdk.git
+	url = https://github.com/atym-io/edge-impulse-sdk.git
